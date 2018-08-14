@@ -1,0 +1,24 @@
+{% extends "orders/base.html" %}
+
+{% block title %}Register for Sort of Pinochio's Pizza {% endblock %}
+
+{% block body %}
+<h1>Register for an Account</h1>
+{% if message %}
+    <div>
+        {{ message }}
+    </div>
+{% endif %}
+<form action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+    First Name: <input name="firstname" type="text"/><p>
+    Last Name: <input name="lastname" type="text"/><p>
+    Email Address: <input name="email" type="text"><p>
+    Desired Username: <input name="username" type="text"/><p>
+    Password: <input name="password" type="password"/><p>
+    Confirm Password: <input name="password_confirmation" type="password"/><p>
+    <input type="submit" value="Register"/>
+</form>
+Already have an account?  <br>
+<a href="{% url 'login' %}">Log in</a>
+{% endblock %}

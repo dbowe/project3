@@ -1,0 +1,126 @@
+{% extends "orders/base.html" %}
+
+{% block title %}
+    Sort of Pinochio's Menu
+{% endblock %}
+
+{% block body %}
+<h1>Menu</h1>
+{% if message %}
+    <div>
+        {{ message }}
+    </div>
+{% endif %}
+
+  <h2>Regular Pizzas</h2>
+  <table>
+    <tr>
+      <th>&nbsp;</th><th>Small</th><th>Large</th>
+    </tr>
+    <tr>
+      <td>Cheese</td>
+      <td> {{ regSmPizzas.plainPrice }} </td>
+      <td> {{ regLgPizzas.plainPrice }}</td>
+    </tr> 
+    <tr>
+      <td>1 Topping</td>
+      <td> {{ regSmPizzas.plusOnePrice }} </td>
+      <td> {{ regLgPizzas.plusOnePrice }}</td>
+    </tr> 
+    <tr>
+      <td>2 Toppings</td>
+      <td> {{ regSmPizzas.plusTwoPrice }} </td>
+      <td> {{ regLgPizzas.plusTwoPrice }}</td>
+    </tr> 
+    <tr>
+      <td>3 Toppings</td>
+      <td> {{ regSmPizzas.plusThreePrice }} </td>
+      <td> {{ regLgPizzas.plusThreePrice }}</td>
+    </tr> 
+    <tr>
+      <td>Special</td>
+      <td> {{ regSmPizzas.specialPrice }} </td>
+      <td> {{ regLgPizzas.specialPrice }}</td>
+    </tr> 
+  </table>
+
+  <h2>Sicilian Pizzas:</h2>
+  <table>
+    <tr>
+      <th>&nbsp;</th><th>Small</th><th>Large</th>
+    </tr>
+    <tr>
+      <td>Cheese</td>
+      <td> {{ sicilianSmPizzas.plainPrice }} </td>
+      <td> {{ sicilianLgPizzas.plainPrice }}</td>
+    </tr> 
+    <tr>
+      <td>1 Topping</td>
+      <td> {{ sicilianSmPizzas.plusOnePrice }} </td>
+      <td> {{ sicilianLgPizzas.plusOnePrice }}</td>
+    </tr> 
+    <tr>
+      <td>2 Toppings</td>
+      <td> {{ sicilianSmPizzas.plusTwoPrice }} </td>
+      <td> {{ sicilianLgPizzas.plusTwoPrice }}</td>
+    </tr> 
+    <tr>
+      <td>3 Toppings</td>
+      <td> {{ sicilianSmPizzas.plusThreePrice }} </td>
+      <td> {{ sicilianLgPizzas.plusThreePrice }}</td>
+    </tr> 
+    <tr>
+      <td>Special</td>
+      <td> {{ sicilianSmPizzas.specialPrice }} </td>
+      <td> {{ sicilianLgPizzas.specialPrice }}</td>
+    </tr> 
+  </table>
+
+  <hr>
+  <h2>Toppings</h2>
+  <center>
+  {% for topping in toppings %}
+      {{ topping }} <br>
+  {% empty %}
+      No toppings today<br>
+  {% endfor %}
+  </center>
+
+  <h2>Subs:</h2>
+  <table>
+    <tr><th>&nbsp;</th><th>Small</th><th>Large</th></tr>
+    {% for sub in subs %}
+    <tr><td> {{ sub.type }}</td><td> {{ sub.smPrice }}</td><td>{{ sub.lgPrice }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No subs </td></tr>
+    {% endfor %}
+  </table>
+    
+  <h2>Pasta:</h2>
+  <table>
+    {% for pasta in pastas %}
+    <tr><td> {{ pasta.type }}</td><td> {{ pasta.price }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No pasta </td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Salads:</h2>
+  <table>
+    {% for salad in salads %}
+    <tr><td> {{ salad.type }}</td><td>{{ salad.price }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No salads </td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Dinner Platters:</h2>
+  <table>
+    {% for platter in platters %}
+    <tr><td> {{ platter.type }}</td><td>Small: {{ platter.smPrice }}<br>Large: {{ platter.lgPrice }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No platters </td></tr>
+    {% endfor %}
+  </table>
+    
+{% endblock %}
