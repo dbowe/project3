@@ -5,14 +5,12 @@
 {% endblock %}
 
 {% block body %}
+<header>
 <h1>Menu</h1>
-{% if message %}
-    <div>
-        {{ message }}
-    </div>
-{% endif %}
-
-  <h2>Regular Pizzas</h2>
+</header>
+<section>
+  <menu>
+  <h2><a name="regular">Regular Pizzas</a></h2>
   <table>
     <tr>
       <th>&nbsp;</th><th>Small</th><th>Large</th>
@@ -43,8 +41,12 @@
       <td> {{ regLgPizzas.specialPrice }}</td>
     </tr> 
   </table>
-
-  <h2>Sicilian Pizzas:</h2>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  <h2><a name="sicilian"Sicilian Pizzas:</a></h2>
   <table>
     <tr>
       <th>&nbsp;</th><th>Small</th><th>Large</th>
@@ -75,28 +77,51 @@
       <td> {{ sicilianLgPizzas.specialPrice }}</td>
     </tr> 
   </table>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
 
-  <hr>
-  <h2>Toppings</h2>
-  <center>
+  <h2><a name="toppings">Toppings</a></h2>
+  <div class="toppings">
   {% for topping in toppings %}
       {{ topping }} <br>
   {% empty %}
       No toppings today<br>
   {% endfor %}
-  </center>
+  </div>
 
-  <h2>Subs:</h2>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  <h2><a name="subs">Subs:</a></h2>
   <table>
     <tr><th>&nbsp;</th><th>Small</th><th>Large</th></tr>
     {% for sub in subs %}
+    {% if sub.smPrice == 0 %}
+        <tr><td> {{ sub.type }}</td><td> &nbsp;<td>{{ sub.lgPrice }}</td></tr>
+    {% else %}
     <tr><td> {{ sub.type }}</td><td> {{ sub.smPrice }}</td><td>{{ sub.lgPrice }}</td></tr>
+    {% endif %}
+    {% if sub.type == "Steak + Cheese" %}
+       {% for ex in extras %}
+        <tr><td>+ {{ex.type }}</td><td>{{ ex.price }}</td><td>{{ ex.price }}</td></tr>
+       {% endfor %}
+    {% endif %}
     {% empty %}
     <tr><td colspan="3">No subs </td></tr>
     {% endfor %}
+    <tr><td>Extra Cheese on any sub</td><td>+{{ cheese.price }}</td><td>+{{ cheese.price }}</td>
   </table>
-    
-  <h2>Pasta:</h2>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  <h2><a name="pasta">Pasta:</a></h2>
   <table>
     {% for pasta in pastas %}
     <tr><td> {{ pasta.type }}</td><td> {{ pasta.price }}</td></tr>
@@ -104,8 +129,12 @@
     <tr><td colspan="3">No pasta </td></tr>
     {% endfor %}
   </table>
-
-  <h2>Salads:</h2>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  <h2><a name="salad">Salads:</a></h2>
   <table>
     {% for salad in salads %}
     <tr><td> {{ salad.type }}</td><td>{{ salad.price }}</td></tr>
@@ -113,8 +142,12 @@
     <tr><td colspan="3">No salads </td></tr>
     {% endfor %}
   </table>
-
-  <h2>Dinner Platters:</h2>
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  <h2><a name="platters"Dinner Platters:</a></h2>
   <table>
     {% for platter in platters %}
     <tr><td> {{ platter.type }}</td><td>Small: {{ platter.smPrice }}<br>Large: {{ platter.lgPrice }}</td></tr>
@@ -122,5 +155,11 @@
     <tr><td colspan="3">No platters </td></tr>
     {% endfor %}
   </table>
-    
+  <div class="nav">
+  <a href="#regular">Regular Pizza</a> | <a href="#sicilian">Sicilian Pizza</a> | 
+      <a href="#toppings">Toppings</a> | <a href="#subs"> Subs</a> | <a href="#pasta">Pasta</a> |
+      <a href="#salads">Salads</a> | <a href="#platters">Dinner Platters</a>
+  </div>
+  </menu>
+</section>    
 {% endblock %}

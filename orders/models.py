@@ -38,10 +38,11 @@ class Pizza(models.Model):
         return f"[{self.size}][{self.type}]: ${self.plainPrice} ${self.plusOnePrice} ${self.plusTwoPrice} ${self.plusThreePrice} ${self.specialPrice}"
 
 class Extras(models.Model):
-    extras = models.CharField(max_length=20)
+    type = models.CharField(max_length=20)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return f"Add {self.extras}"
+        return f"{self.type} ${self.price}"
 
 class Sub (models.Model):
     type = models.CharField(max_length=64, blank=False)

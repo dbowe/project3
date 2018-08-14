@@ -4,25 +4,19 @@
 
   /* Style the header */
 header {
-      background-color: #f7f6b9;
+      background-color: #f0f0f0;
       padding: 30px;
       text-align: center;
       font-size: 18pt;
       }
 
-nav {
+menu {
     float: left;
-    width: 30%;
-    background: #f7f6b9;
+    width: 60%;
+    background: #f2f2f2;
     padding: 10px;
     border-style: solid none none none;
     border-color: #9cc105;
-}
-
-/* Style the list inside the menu */
-nav ul {
-    list-style-type: none;
-    padding: 0;
 }
 
 article {
@@ -72,7 +66,7 @@ textarea {
 
 body {
       font-family: Arial, Helvetica, sans-serif;
-      background-color: #f7f6b9;}
+      background-color: #027714;}
 }
 
 
@@ -80,11 +74,17 @@ div {
     padding: 25px;
     margin: 20px;
 }
-.centered {
+
+.nav {
+     font-size: 10pt;
+     text-align: center
+}
+
+.toppings {
 	  display: block;
 	  margin-left: auto;
 	  margin-right: auto;
-	  width: 50%;
+	  text-align: center;
 	  padding: 5px;
 }	
 #small { 
