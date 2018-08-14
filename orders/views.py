@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Pizza, Sub, Toppings, Platter, Pasta, Salad
+from .models import Pizza, Sub, Toppings, Platter, Pasta, Salad, Extras
 
 # Create your views here.
 def index(request):
@@ -27,6 +27,8 @@ def menu(request):
     salads = Salad.objects.all()
     platters = Platter.objects.all()
     pastas = Pasta.objects.all()
+    cheese = Extras.objects.filter(type="Extra Cheese")[0]
+    extras = Extras.objects.exclude(type= "Extra Cheese")
 
     context = {
         "regSmPizzas": regSmPizzas,
@@ -35,6 +37,8 @@ def menu(request):
         "sicilianLgPizzas": sicilianLgPizzas,
         "toppings": toppings,
         "subs": subs,
+        "cheese": cheese,
+        "extras": extras,
         "salads": salads,
         "platters": platters,
         "pastas": pastas
@@ -62,11 +66,11 @@ def register_view(request):
 
     # Check for matching passwords
     if password != password2:
-        return HttpResponseRedirect(reverse("register", {"message": "Passwords do not match"}))
+        return render(request, "orders/login.html", {"message": "Passwords do not match"})
     # Check if username already in use
-    user = authenticate(request, username=username, password=password)
+    user = User.objects.get(username=username)
     if user is not None:
-        return HttpResponseRedirect(reverse("register", {"message": "User exists"}))
+        return render(request, "orders/login.html", {"message": "Username exists.  Please choose another."})
 
     # Create new user and log him/her in
     user = User.objects.create_user(username, email, password)

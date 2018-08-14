@@ -10,7 +10,7 @@ header {
       font-size: 18pt;
       }
 
-menu {
+menu, reg{
     float: left;
     width: 60%;
     background: #f2f2f2;
