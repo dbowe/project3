@@ -1,0 +1,110 @@
+{% extends "orders/base.html" %}
+{% load static %}
+
+{% block title %}
+   Pinochio Online Ordering
+{% endblock %}
+
+{% block body %}
+<header>
+<!--  <script src="{% static 'orders/menu.js' %}" /></script> -->
+<script>
+  var counter = 0;
+</script>
+<h1>Place an Order</h1>
+</header>
+<section>
+  <nav>
+  <a href="{% url 'logout' %}">Log Out</a><p>    
+  <a href="{% url 'menu' %}">Return to Menu</a><p>    
+  </nav> 
+  <onlineMenu>
+    <form action = "{% url 'shoppingCart' %}" method="post">
+      {% csrf_token %}
+      <h2 class="itemName">Choose a Pizza size and type</h2>
+     <div class="row">
+      <div class="column">
+      {% for pizza in allPizzas %}
+          <input type="radio" name="pizza" class="menuItem" value={{ pizza.size }}{{ pizza.type }}>
+	  {% if pizza.size == "S" %}
+	    Small
+	  {% else %}
+	    Large
+	  {% endif %}
+	  {% if pizza.type == "R" %}
+	    Regular
+	  {% else %}
+	    Sicilian
+	  {% endif %}
+	  <br>
+      {% if forloop.counter|divisibleby:2 or forloop.last%}
+	  </div>
+      {% if not forloop.last %}
+      <div class="column">
+        {% endif %}
+	{% endif %}
+    {% endfor %}
+      </div>
+      <div class="after"></div>
+     <h2 class="itemName">Add Toppings </h2>
+      <p>
+     <div class="row">
+      <div class="column">
+       {% for topping in toppings %}
+              <input type="checkbox" name="topping" value={{ topping }}>{{ topping }}<br>
+	      {% if forloop.counter|divisibleby:5 or forloop.last%}
+   	        </div>
+                  {% if not forloop.last %}
+                  <div class="column">
+                  {% endif %}
+	      {% endif %}
+       {% endfor %}
+     </div>
+      <input type="submit" value="Add to Cart"/>
+      <div class="after"></div>
+     <h2 class="itemName">Subs</h2>
+     <div class="row">
+      <div class="column">
+	{% for sub in subs %}
+  	    {{ sub.type }} <br>
+	{% endfor %}
+      </div>
+      <div class="column">
+	{% for sub in subs %}
+	{% if sub.type != "Steak + Cheese" %}
+	    <input type="checkbox" name="sub" value="S{{ sub.type }}">Small
+	{% endif %}
+	    <input type="checkbox" name="sub" value="L{{ sub.type }}">Large<br>
+	{% endfor %}
+      </div>
+     </div>
+     
+     <div class="row">
+       <div class="column">
+	 <h2 class="itemName">Pasta</h2>
+         {% for pasta in pastas %}
+	 {{ pasta.type }}
+	 <input type="checkbox" name="pasta" value="{{ pasta.type }}"><br>
+	 {% endfor %}
+	 </div>
+       <div class="column">
+	 <h2 class="itemName">Salad</h2>
+         {% for salad in salads %}
+	 {{ salad.type }}
+	 <input type="checkbox" name="salad" value="{{ salad.type }}"><br>
+       	 {% endfor %}
+       </div>
+       <div class="column">
+	 <h2 class="itemName">Platters</h2>
+	 {% for platter in platters %}
+  	 {{ platter.type }} 
+	 <input type="checkbox" name="platter" value="S{{ platter.type }}">Small
+	 <input type="checkbox" name="platter" value="L{{ platter.type }}">Large<br>
+	 {% endfor %}
+       </div>
+     </div>
+      <input type="submit" value="Add to Cart"/>
+      </form>
+    </onlineMenu>
+</section>
+{% endblock %}

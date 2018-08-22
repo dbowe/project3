@@ -2,19 +2,16 @@
 
 {% block title %} Log in  {% endblock %}
 {% block body %}
-<h1>Login to your Sort of Pinochio's Account</h1>
-{% if message %}
-    <div>
-        {{ message }}
-    </div>
-{% endif %}
+<section>
+  <reg>
+<h1>Welcome to Sort of Pinochio's</h1>
 <h1>Register for an Account</h1>
 {% if message %}
     <div>
         {{ message }}
     </div>
 {% endif %}
-<form action="{% url 'register' %}" method="post">
+<form action="{% url 'login' %}" method="post">
     {% csrf_token %}
     First Name: <input name="firstname" type="text"/><p>
     Last Name: <input name="lastname" type="text"/><p>
@@ -31,4 +28,6 @@
     Password: <input name="password" type="password"/><p>
     <input type="submit" value="Login"/>
 </form>
+</reg>
+</section>
 {% endblock %}

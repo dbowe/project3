@@ -1,0 +1,46 @@
+{% extends "orders/base.html" %}
+{% load static %}
+
+
+{% block title %}
+   Pinochio Shopping Cart
+{% endblock %}
+
+{% block body %}
+<header>
+<!--  <script src="{% static 'orders/menu.js' %}" /></script> -->
+
+<h1>Shopping Cart</h1>
+</header>
+<section>
+  <nav>
+  <a href="{% url 'logout' %}">Log Out</a><p>    
+  <a href="{% url 'menu' %}">Return to Menu</a><p>    
+  <a href="{% url 'emptyCart' %}">Empty Cart</a><p>    
+  <a href="{% url 'orderOnline' %}">Continue Shopping</a><p>    
+  <form action = "{% url 'placeOrder' %}" method="post">
+      {% csrf_token %}
+    <input type="submit" value="Place an Order"/>
+  </form>
+						      
+  </nav> 
+  <article>
+    {% for nextItem in cart %}
+    {{ nextItem.size }} {{ nextItem.type }} {{ nextItem.itemType }}
+
+    {% if nextItem.itemType == "pizza" %}
+        {% if nextItem.toppings %}
+          with 
+          {% for topping in nextItem.toppings %}
+               {{ topping }}
+          {% endfor %}
+        {% endif %}
+    {% endif %}
+    ${{ nextItem.price }}<br>
+    {% endfor %}
+        <hr>
+    Total = ${{ total }}
+    </article>
+</section>
+{% endblock %}
+a
