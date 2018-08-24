@@ -4,7 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import Pizza, Sub, Topping, Platter, Pasta, Salad, Extra, PizzaPricing, Order, Customer
+import json
+
+from .models import Pizza, Sub, Topping, Platter, Pasta, Salad, Extra, PizzaPricing, Order
 
 myShoppingCart = {}
 # Ask user to log in or create an account
@@ -57,7 +59,10 @@ def get_menu():
 # Log user in and display menu
 def login_view(request):
     username = request.POST["username"]
-    user = User.objects.get(username=username)
+    try: 
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = None
 
     # No user with that name; try to register
     if user is None:
@@ -69,10 +74,6 @@ def login_view(request):
         # Check for matching passwords
         if password != password2:
             return render(request, "orders/login.html", {"message": "Passwords do not match"})
-        # Check if username already in use
-        user = User.objects.get(username=username)
-        if user is not None:
-            return render(request, "orders/login.html", {"message": "Username exists.  Please choose another."})
 
         # Create new user and log him/her in
         user = User.objects.create_user(username, email, password)
@@ -108,21 +109,32 @@ def emptyCart(request):
     menu = get_menu()
     return render(request, "orders/orderOnline.html", menu)
 
+# View Order History
+def viewOrders(request):
+    user_id = request.user.id
+
+    orders = Order.objects.filter(customer=user_id)
+        
+    context = {
+        "myOrders": orders,
+        }
+    return render(request, "orders/viewOrders.html", context)
+
 # View Shopping cart
 def shoppingCart(request):
 
-#    if request.user not in myShoppingCart:
-#        myItems = ["Cart is Empty"]
-#        context = {"cart": myItems, "Total": 0}
-#        return render(request, "orders/shoppingCart.html", context)
     user_id = request.user.id
-
+    if user_id not in myShoppingCart:
+        myShoppingCart[user_id] = {"Total": 0, "myItems": []}
+        
     add_toppings=[]
     if 'pizza' in request.POST and request.POST["pizza"]:
         details = request.POST["pizza"]
         size = details[0]
         type = details[1]
-        new_item = {"size": size, "itemType": "pizza", "type": type } 
+        new_item = {"size": size, 
+                    "itemType": "pizza", 
+                    "type": type } 
         if 'topping' in request.POST:
             add_toppings = request.POST.getlist('topping')
             num_toppings = len(add_toppings)
@@ -136,7 +148,8 @@ def shoppingCart(request):
             myShoppingCart[user_id]["Total"] += priceObj.pizzaPrice
             myShoppingCart[user_id]["myItems"].append(new_item)
         else: 
-            myShoppingCart[user_id] = {"myItems": [new_item], "Total": priceObj.pizzaPrice}
+            myShoppingCart[user_id] = {"myItems": [new_item], 
+                                       "Total": priceObj.pizzaPrice}
         myShoppingCart[user_id]["pizza"] = new_item
 
     if 'sub' in request.POST and request.POST['sub']:
@@ -145,17 +158,29 @@ def shoppingCart(request):
             size = next_sub[0]
             subType = next_sub[1:]
             subObj = Sub.objects.get(type=subType)
-            new_item = {"size": size, "itemType": "sub", "type": subType } 
+            exPrice = 0
+            new_item = {"size": size, 
+                        "itemType": "sub", 
+                        "type": subType } 
             if size == "S":
                 price = subObj.smPrice
             else:
                 price = subObj.lgPrice
+            if subType == "Steak + Cheese":
+                if 'extras' in request.POST:
+                    addOns = request.POST.getlist("extras")
+                    for addOn in addOns:
+                        ex = Extra.objects.get(type=addOn)
+                        exPrice += ex.price
+                new_item["extras"] = addOns
+            price += exPrice
             new_item["price"] = price
             if user_id in myShoppingCart:
                 myShoppingCart[user_id]["Total"] += price
                 myShoppingCart[user_id]["myItems"].append(new_item)
             else: 
-                myShoppingCart[user_id] = {"myItems": [new_item], "Total": price}
+                myShoppingCart[user_id] = {"myItems": [new_item], 
+                                           "Total": price}
                                  
     if 'platter' in request.POST and request.POST['platter']:
         platters = request.POST.getlist('platter')
@@ -163,7 +188,9 @@ def shoppingCart(request):
             size = next_platter[0]
             platterType = next_platter[1:]
             platterObj = Platter.objects.get(type=platterType)
-            new_item = {"size": size, "itemType": "platter", "type": platterType } 
+            new_item = {"size": size, 
+                        "itemType": "platter", 
+                        "type": platterType } 
             if size == "S":
                 price = platterObj.smPrice
             else:
@@ -173,34 +200,41 @@ def shoppingCart(request):
                 myShoppingCart[user_id]["Total"] += price
                 myShoppingCart[user_id]["myItems"].append(new_item)
             else: 
-                myShoppingCart[user_id] = {"myItems": [new_item], "Total": price}
+                myShoppingCart[user_id] = {"myItems": [new_item], 
+                                           "Total": price}
                                  
     if 'salad' in request.POST and request.POST['salad']:
         salads = request.POST.getlist('salad')
         for next_salad in salads:
             saladObj = Salad.objects.get(type=next_salad)
-            new_item = {"size": "", "itemType": "salad", "type": next_salad } 
-            new_item["price"] = saladObj.price
+            new_item = {"size": "One size", 
+                        "itemType": "salad", 
+                        "type": next_salad,
+                        "price": saladObj.price
+                        } 
             if user_id in myShoppingCart:
                 myShoppingCart[user_id]["Total"] += saladObj.price
                 myShoppingCart[user_id]["myItems"].append(new_item)
             else: 
-                myShoppingCart[user_id] = {"myItems": [new_item], "Total": saladObj.price}
+                myShoppingCart[user_id] = {"myItems": [new_item], 
+                                           "Total": saladObj.price}
                                  
     if 'pasta' in request.POST and request.POST['pasta']:
         pastas = request.POST.getlist('pasta')
         for next_pasta in pastas:
             pastaObj = Pasta.objects.get(type=next_pasta)
             price = pastaObj.price
-            new_item = {"size": "", "itemType": "pasta", "type": next_pasta } 
-            new_item["price"] = price
+            new_item = {"size": "", 
+                        "itemType": "pasta", 
+                        "type": next_pasta,
+                        "price":price }
             if user_id in myShoppingCart:
                 myShoppingCart[user_id]["Total"] += price
                 myShoppingCart[user_id]["myItems"].append(new_item)
             else: 
-                myShoppingCart[user_id] = {"myItems": [new_item], "Total": price}
+                myShoppingCart[user_id] = {"myItems": [new_item], 
+                                           "Total": price}
 
-    print (f"shoppingCart: myItems = ", myShoppingCart[user_id]["myItems"])
     context = {
         "cart": myShoppingCart[user_id]["myItems"],
         "total": myShoppingCart[user_id]["Total"],
@@ -216,26 +250,21 @@ def orderOnline(request):
 def placeOrder_view(request, methods=["POST"]):
     user_id = request.user.id
 
+    if user_id not in myShoppingCart:
+        menu = get_menu()
+        return render (request, "orders/orderOnline.html", menu)
+
     orderItems = myShoppingCart[user_id]["myItems"]
     orderTotal = myShoppingCart[user_id]["Total"]
-
-    print (f"placeOrder: user = ", user_id, "total = ", myShoppingCart[user_id]["Total"])
-
-    order = Order.objects.create(total=orderTotal)
-
-    # Get this customer's orders
-    customer = Customer.objects.get(pk=user_id)
-    if customer is None:
-        customer = Customer()
-        customer.username = request.user["username"]
-
-    #add each item to a new order
-    order.itemList = str(orderItems)
+    user = User.objects.get(pk=user_id)
+    order = Order.objects.create(total=orderTotal, customer=user, itemList=orderItems)
     order.save()
-    customer.orders.add(order)
-    customer.save()
     emptyMyCart(user_id)
-    return render(request, "orders/login.html", {"message": "Order Placed!!"})
+
+    context = get_menu()
+    context["username"] = user.username
+    return render(request, "orders/menu.html", context)
+#    return render(request, "orders/menu.html", context, {"message": "Order Placed!!"})
 
 # Goodbye
 def logout_view(request):

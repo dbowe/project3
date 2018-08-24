@@ -1,0 +1,31 @@
+{% extends "orders/base.html" %}
+{% load static %}
+
+
+{% block title %}
+    Sort of Pinochio's Menu
+{% endblock %}
+
+{% block body %}
+<header>
+  <script src="{% static 'orders/menu.js' %}" /></script> 
+
+<h1>Order History</h1>
+</header>
+<section>
+  <nav>
+  <a href="{% url 'menu' %}"> Menu</a><p>    
+  <a href="{% url 'orderOnline' %}">Place an Order</a><p>    
+  <a href="{% url 'emptyCart' %}">Empty Cart</a><p>    
+  <a href="{% url 'logout' %}">Log Out</a><p>    
+  </nav>
+  <article>
+    {% for nextOrder in myOrders %}
+    {{ nextOrder.date }} ${{ nextOrder.total }} <br>
+    {{ nextOrder.itemList }}<br>
+    <p>
+    {% endfor %}
+  </article>
+
+</section>
+{% endblock %}

@@ -15,8 +15,11 @@
 </header>
 <section>
   <nav>
+  <a href="{% url 'menu' %}">Menu</a><p>    
+  <a href="{% url 'shoppingCart' %}">View Shopping Cart</a><p>    
+  <a href="{% url 'emptyCart' %}">Empty Shopping Cart</a><p>    
+  <a href="{% url 'viewOrders' %}">View Order History</a><p>    
   <a href="{% url 'logout' %}">Log Out</a><p>    
-  <a href="{% url 'menu' %}">Return to Menu</a><p>    
   </nav> 
   <onlineMenu>
     <form action = "{% url 'shoppingCart' %}" method="post">
@@ -37,11 +40,9 @@
 	    Sicilian
 	  {% endif %}
 	  <br>
-      {% if forloop.counter|divisibleby:2 or forloop.last%}
 	  </div>
       {% if not forloop.last %}
       <div class="column">
-        {% endif %}
 	{% endif %}
     {% endfor %}
       </div>
@@ -65,41 +66,50 @@
      <h2 class="itemName">Subs</h2>
      <div class="row">
       <div class="column">
-	{% for sub in subs %}
-  	    {{ sub.type }} <br>
+ 	{% for sub in subs %}
+	  {% if sub.smPrice > 0  %}
+	      <input type="checkbox" name="sub" value="S{{ sub.type }}">Small
+	  {% endif %}
+	  <input type="checkbox" name="sub" value="L{{ sub.type }}">Large
+  	  <span class="menuItem">{{ sub.type }}</span>  <br>
+ 	  {% if sub.type == "Steak + Cheese" %}
+	    <input type="checkbox" name="extras" value="Mushrooms">+ Mushrooms <br>
+  	    <input type="checkbox" name="extras" value="Green Peppers"> + Green Peppers<br>
+	    <input type="checkbox" name="extras" value="Onions">+ Onions<br>
+	  {% endif %}
+	  {% if forloop.counter|divisibleby:8 or forloop.last%}
+  	     </div>
+             {% if not forloop.last %}
+               <div class="column">
+             {% endif %}
+	  {% endif %}
 	{% endfor %}
       </div>
-      <div class="column">
-	{% for sub in subs %}
-	{% if sub.type != "Steak + Cheese" %}
-	    <input type="checkbox" name="sub" value="S{{ sub.type }}">Small
-	{% endif %}
-	    <input type="checkbox" name="sub" value="L{{ sub.type }}">Large<br>
-	{% endfor %}
+      <input type="checkbox" name="extras" value="Extra Cheese">Extra Cheese on any sub<br>
       </div>
      </div>
-     
+      <input type="submit" value="Add to Cart"/>
      <div class="row">
        <div class="column">
 	 <h2 class="itemName">Pasta</h2>
          {% for pasta in pastas %}
-	 {{ pasta.type }}
-	 <input type="checkbox" name="pasta" value="{{ pasta.type }}"><br>
+	 <input type="checkbox" name="pasta" value="{{ pasta.type }}">
+	 <span class="menuItem">{{ pasta.type }}</span><br>
 	 {% endfor %}
 	 </div>
        <div class="column">
 	 <h2 class="itemName">Salad</h2>
          {% for salad in salads %}
-	 {{ salad.type }}
-	 <input type="checkbox" name="salad" value="{{ salad.type }}"><br>
+	 <input type="checkbox" name="salad" value="{{ salad.type }}">
+	 <span class="menuItem">{{ salad.type }}</span><br>
        	 {% endfor %}
        </div>
        <div class="column">
 	 <h2 class="itemName">Platters</h2>
 	 {% for platter in platters %}
-  	 {{ platter.type }} 
 	 <input type="checkbox" name="platter" value="S{{ platter.type }}">Small
-	 <input type="checkbox" name="platter" value="L{{ platter.type }}">Large<br>
+	 <input type="checkbox" name="platter" value="L{{ platter.type }}">Large
+  	 <span class="menuItem">{{ platter.type }}</span> <br>
 	 {% endfor %}
        </div>
      </div>

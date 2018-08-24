@@ -14,10 +14,11 @@
 </header>
 <section>
   <nav>
-  <a href="{% url 'logout' %}">Log Out</a><p>    
-  <a href="{% url 'menu' %}">Return to Menu</a><p>    
-  <a href="{% url 'emptyCart' %}">Empty Cart</a><p>    
+  <a href="{% url 'menu' %}">Menu</a><p>    
   <a href="{% url 'orderOnline' %}">Continue Shopping</a><p>    
+  <a href="{% url 'emptyCart' %}">Empty Shoppping Cart</a><p>    
+  <a href="{% url 'viewOrders' %}">View Order History</a><p>    
+  <a href="{% url 'logout' %}">Log Out</a><p>    
   <form action = "{% url 'placeOrder' %}" method="post">
       {% csrf_token %}
     <input type="submit" value="Place an Order"/>
@@ -36,6 +37,14 @@
           {% endfor %}
         {% endif %}
     {% endif %}
+    {% if nextItem.itemType == "sub" %}
+        {% if nextItem.extras %}
+          with 
+          {% for extra in nextItem.extras %}
+               {{ extra }}
+          {% endfor %}
+        {% endif %}
+    {% endif %}
     ${{ nextItem.price }}<br>
     {% endfor %}
         <hr>
@@ -43,4 +52,3 @@
     </article>
 </section>
 {% endblock %}
-a
