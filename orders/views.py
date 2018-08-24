@@ -12,7 +12,7 @@ myShoppingCart = {}
 # Ask user to log in or create an account
 def index(request):
     if not request.user.is_authenticated:
-        return render(request, "orders/login.html", {"message": "Please create an account for online ordering"})
+        return render(request, "orders/login.html")
 
     context = {
         "user": request.user
@@ -21,7 +21,10 @@ def index(request):
 
 
 # display the menu.  need to deal with username
-def menu_view(request):
+def menu_view(request, methods=["POST"]):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
+
     menu = get_menu()
     return render(request, "orders/menu.html", menu)
     
@@ -105,12 +108,16 @@ def emptyMyCart(user):
         
 # Empty Shopping cart
 def emptyCart(request):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
     emptyMyCart(request.user.id)
     menu = get_menu()
     return render(request, "orders/orderOnline.html", menu)
 
 # View Order History
 def viewOrders(request):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
     user_id = request.user.id
 
     orders = Order.objects.filter(customer=user_id)
@@ -122,6 +129,8 @@ def viewOrders(request):
 
 # View Shopping cart
 def shoppingCart(request):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
 
     user_id = request.user.id
     if user_id not in myShoppingCart:
@@ -166,13 +175,12 @@ def shoppingCart(request):
                 price = subObj.smPrice
             else:
                 price = subObj.lgPrice
-            if subType == "Steak + Cheese":
-                if 'extras' in request.POST:
-                    addOns = request.POST.getlist("extras")
-                    for addOn in addOns:
-                        ex = Extra.objects.get(type=addOn)
-                        exPrice += ex.price
-                new_item["extras"] = addOns
+            if 'extras' in request.POST:
+                addOns = request.POST.getlist("extras")
+                for addOn in addOns:
+                    ex = Extra.objects.get(type=addOn)
+                    exPrice += ex.price
+                    new_item["extras"] = addOns
             price += exPrice
             new_item["price"] = price
             if user_id in myShoppingCart:
@@ -243,11 +251,15 @@ def shoppingCart(request):
 
 # Place an online order
 def orderOnline(request):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
     menu = get_menu()
     return render(request, "orders/orderOnline.html", menu)
 
 # Display order for confirmation
 def placeOrder_view(request, methods=["POST"]):
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html")
     user_id = request.user.id
 
     if user_id not in myShoppingCart:
@@ -263,8 +275,7 @@ def placeOrder_view(request, methods=["POST"]):
 
     context = get_menu()
     context["username"] = user.username
-    return render(request, "orders/menu.html", context)
-#    return render(request, "orders/menu.html", context, {"message": "Order Placed!!"})
+    return render(request, "orders/menu.html", context, {"message": "Order Placed!!"})
 
 # Goodbye
 def logout_view(request):
